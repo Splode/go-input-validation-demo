@@ -1,4 +1,4 @@
-package main
+package lead
 
 // Lead represents the lead form POST data.
 type Lead struct {
