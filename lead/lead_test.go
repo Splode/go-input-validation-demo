@@ -10,7 +10,7 @@ import (
 )
 
 func TestJSONtoLead(t *testing.T) {
-	js := `{"name": "Joe", "email": "joe@example.com", "organization": "Example, Inc.", "message": "I'm interested in learning more about your project.", "phone": "555-555-5555", "newsletter": false}`
+	js := `{"name": "Joe", "email": "joe@example.com", "organization": "Example, Inc.", "message": "I'm interested in learning more about your project.", "phone": "555-555-5555", "newsletter": false, "products": ["hardware"]}`
 
 	var l lead.Lead
 	if err := json.Unmarshal([]byte(js), &l); err != nil {
@@ -24,6 +24,7 @@ func TestJSONtoLead(t *testing.T) {
 		Message:      "I'm interested in learning more about your project.",
 		Phone:        "555-555-5555",
 		Newsletter:   false,
+		Products:     []string{"hardware"},
 	}
 
 	if expected.Name != l.Name {
@@ -43,6 +44,9 @@ func TestJSONtoLead(t *testing.T) {
 	}
 	if expected.Newsletter != l.Newsletter {
 		t.Errorf("expected %v, got %v", expected.Newsletter, l.Newsletter)
+	}
+	if expected.Products[0] != l.Products[0] {
+		t.Errorf("expected %v, got %v", expected.Products[0], l.Products[0])
 	}
 }
 
@@ -81,5 +85,31 @@ func TestRandomLead(t *testing.T) {
 	}
 	if err := l.Validate(); err != nil {
 		t.Errorf("expected validation on %v, got %v", l, err)
+	}
+}
+
+func TestLeadProducts(t *testing.T) {
+	gofakeit.Seed(time.Now().Unix())
+	js := fmt.Sprintf(`{"name": "%s", "email": "%s", "organization": "%s", "message": "%s", "phone": "%s", "newsletter": %t, "products": ["hardware", "software"]}`, gofakeit.Name(), gofakeit.Email(), gofakeit.Company(), gofakeit.HackerPhrase(), gofakeit.Phrase(), gofakeit.Bool())
+
+	var l lead.Lead
+	if err := json.Unmarshal([]byte(js), &l); err != nil {
+		t.Errorf("failed to unmarshal lead to JSON: %v", err.Error())
+	}
+	if err := l.Validate(); err != nil {
+		t.Errorf("expected validation on %v, got %v", l, err)
+	}
+}
+
+func TestLeadProductsInvalid(t *testing.T) {
+	gofakeit.Seed(time.Now().Unix())
+	js := fmt.Sprintf(`{"name": "%s", "email": "%s", "organization": "%s", "message": "%s", "phone": "%s", "newsletter": %t, "products": ["toast"]}`, gofakeit.Name(), gofakeit.Email(), gofakeit.Company(), gofakeit.HackerPhrase(), gofakeit.Phrase(), gofakeit.Bool())
+
+	var l lead.Lead
+	if err := json.Unmarshal([]byte(js), &l); err != nil {
+		t.Errorf("failed to unmarshal lead to JSON: %v", err.Error())
+	}
+	if err := l.Validate(); err == nil {
+		t.Errorf("expected validation error, none received")
 	}
 }
