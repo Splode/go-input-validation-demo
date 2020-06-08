@@ -88,6 +88,19 @@ func TestRandomLead(t *testing.T) {
 	}
 }
 
+func TestLeadCharacterLimits(t *testing.T) {
+	gofakeit.Seed(time.Now().Unix())
+	js := fmt.Sprintf(`{"name": "%s", "email": "%s", "organization": "%s", "message": "%s", "phone": "%s", "newsletter": %t}`, gofakeit.Name(), gofakeit.Email(), gofakeit.Sentence(512), gofakeit.Sentence(512), gofakeit.Phone(), gofakeit.Bool())
+
+	var l lead.Lead
+	if err := json.Unmarshal([]byte(js), &l); err != nil {
+		t.Errorf("failed to unmarshal lead to JSON: %v", err.Error())
+	}
+	if err := l.Validate(); err == nil {
+		t.Errorf("expected validation error, none received")
+	}
+}
+
 func TestLeadProducts(t *testing.T) {
 	gofakeit.Seed(time.Now().Unix())
 	js := fmt.Sprintf(`{"name": "%s", "email": "%s", "organization": "%s", "message": "%s", "phone": "%s", "newsletter": %t, "products": ["hardware", "software"]}`, gofakeit.Name(), gofakeit.Email(), gofakeit.Company(), gofakeit.HackerPhrase(), gofakeit.Phone(), gofakeit.Bool())
