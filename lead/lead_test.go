@@ -38,3 +38,15 @@ func TestJSONtoLead(t *testing.T) {
 		t.Errorf("expected %v, got %v", expected.Referrer, l.Referrer)
 	}
 }
+
+func TestLeadNameRequired(t *testing.T) {
+	js := `{"name": "", "email": "joe@example.com", "organization": "Example, Inc.", "message": "I'm interested in learning more about your project.", "referrer": "search engine"}`
+
+	var l lead.Lead
+	if err := json.Unmarshal([]byte(js), &l); err != nil {
+		t.Errorf("failed to unmarshal lead to JSON: %v", err.Error())
+	}
+	if err := l.Validate(); err == nil {
+		t.Errorf("expected validation error, none received")
+	}
+}

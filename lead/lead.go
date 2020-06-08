@@ -1,7 +1,6 @@
 package lead
 
 import (
-	"errors"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -20,12 +19,12 @@ type Lead struct {
 	Referrer     string `json:"referrer"`
 }
 
-func (lead *Lead) Validate() (e []error) {
-	if err := validate.Struct(&lead); err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			e = append(e, errors.New(err.Tag()))
+func (lead *Lead) Validate() error {
+	if err := validate.Struct(lead); err != nil {
+		if _, ok := err.(*validator.InvalidValidationError); ok {
+			return err
 		}
-		return e
+		return err
 	}
 	return nil
 }
