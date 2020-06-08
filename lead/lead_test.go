@@ -2,6 +2,8 @@ package lead_test
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/brianvoe/gofakeit/v5"
 	"github.com/splode/go-input-validation-demo/lead"
 	"testing"
 )
@@ -48,5 +50,18 @@ func TestLeadNameRequired(t *testing.T) {
 	}
 	if err := l.Validate(); err == nil {
 		t.Errorf("expected validation error, none received")
+	}
+}
+
+func TestRandomLead(t *testing.T) {
+	gofakeit.Seed(0)
+	js := fmt.Sprintf(`{"name": "%s", "email": "%s", "organization": "%s", "message": "%s", "referrer": "%s"}`, gofakeit.Name(), gofakeit.Email(), gofakeit.Company(), gofakeit.HackerPhrase(), gofakeit.Phrase())
+
+	var l lead.Lead
+	if err := json.Unmarshal([]byte(js), &l); err != nil {
+		t.Errorf("failed to unmarshal lead to JSON: %v", err.Error())
+	}
+	if err := l.Validate(); err != nil {
+		t.Errorf("expected validation, got %v", err)
 	}
 }
