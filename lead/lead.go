@@ -17,10 +17,10 @@ func init() {
 
 // Lead represents the lead form POST data.
 type Lead struct {
-	Name         string   `json:"name" validate:"required,ascii"`
-	Email        string   `json:"email" validate:"required,email"`
-	Organization string   `json:"organization"`
-	Message      string   `json:"message"`
+	Name         string   `json:"name" validate:"required,ascii,max=128"`
+	Email        string   `json:"email" validate:"required,email,max=128"`
+	Organization string   `json:"organization" validate:"max=128"`
+	Message      string   `json:"message" validate:"max=512"`
 	Phone        string   `json:"phone" validate:"phone"`
 	Newsletter   bool     `json:"newsletter"`
 	Products     []string `json:"products" validate:"dive,oneof=hardware software"`
