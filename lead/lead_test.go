@@ -63,7 +63,7 @@ func TestLeadPassesValidation(t *testing.T) {
 }
 
 func TestLeadNameRequired(t *testing.T) {
-	js := `{"name": "", "email": "joe@example.com", "organization": "Example, Inc.", "message": "I'm interested in learning more about your project.", "phone": "555-555-5555", "newsletter": false}`
+	js := `{"email": "joe@example.com", "organization": "Example, Inc.", "message": "I'm interested in learning more about your project.", "phone": "555-555-5555", "newsletter": false}`
 
 	var l lead.Lead
 	if err := json.Unmarshal([]byte(js), &l); err != nil {
